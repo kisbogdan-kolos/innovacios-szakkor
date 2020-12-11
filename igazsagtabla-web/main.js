@@ -2,6 +2,10 @@ function solve(input) {
 
 	var variables = [];
 
+	if (input === undefined) {
+		input = "";
+	}
+
 	for (var i = 0; i < input.length; i++) {
 		var char = input[i];
 		if (char == char.toUpperCase() && char != char.toLowerCase()) {
@@ -94,4 +98,19 @@ function solve(input) {
 	return out;
 }
 
-console.log(solve("AoB"));
+var http = require('http');
+
+http.createServer(function (req, res) {
+
+	var parameters = req.url.split("/");
+	//console.log(parameters);
+
+	if (parameters[1] == "solve") {
+		res.write(JSON.stringify(solve(parameters[2])));
+	}
+	else {
+		res.write('Hello World!');
+	}
+
+	res.end();
+}).listen(8080);
