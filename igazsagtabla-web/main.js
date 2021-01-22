@@ -99,17 +99,32 @@ function solve(input) {
 }
 
 var http = require('http');
+var fs = require('fs')
 
 http.createServer(function (req, res) {
+	try {
+		var parameters = req.url.split("/");
+		var firstParam = parameters[1].split("?");
 
-	var parameters = req.url.split("/");
-	//console.log(parameters);
-
-	if (parameters[1] == "solve") {
-		res.write(JSON.stringify(solve(parameters[2])));
-	}
-	else {
-		res.write('Hello World!');
+		switch (firstParam[0]) {
+			case "solve":
+				res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+				var toSolve = firstParam[1].split("=")[1];
+				res.write(JSON.stringify(solve(toSolve)));
+				break;
+			case "index":
+				res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+				res.write(fs.readFileSync('index.html'));
+				break;
+			default:
+				res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+				res.write("Nótfáund!!!!");
+				break;
+		}
+	} catch (err) {
+		console.log(err);
+		res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+		res.write("Számtíng vent róng!");
 	}
 
 	res.end();
